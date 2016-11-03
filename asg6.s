@@ -14,6 +14,8 @@ INITVAL: .asciiz "           Initial Values      "
 NL: .asciiz "\n"
 SPC2: .asciiz "  "
 REM: .asciiz "              Rem=Rem-Div      "
+RESTORE: .asciiz "          2b: Restore Rem      "
+SHIFT: .asciiz "         Shift Div Right       "
 	.text
 	.globl main
 
@@ -56,6 +58,7 @@ query:
 	syscall
 
 	move $a0,$t2
+	li $a1,28
 	addi $sp,$sp,-16
 	sw $t2,4($sp)
 	sw $t3,8($sp)
@@ -72,6 +75,7 @@ query:
 	syscall
 
 	move $a0,$t3
+	li $a1,24
 	addi $sp,$sp,-16
 	sw $t2,4($sp)
 	sw $t3,8($sp)
@@ -89,6 +93,8 @@ query:
 
 	move $a0,$t3
 	move $a1,$t2
+	li $a2,28
+	li $a3,24
 	addi $sp,$sp,-16
 	sw $t2,4($sp)
 	sw $t3,8($sp)
@@ -118,6 +124,7 @@ query:
 	la $a0,SPC2
 	syscall
 	move $a0,$t2
+	li $a1,28
 	addi $sp,$sp,-16
 	sw $t2,4($sp)
 	sw $t3,8($sp)
@@ -147,9 +154,533 @@ query:
 	syscall
 
 	blt $s7,$zero,restorerem
-	bge $s7,$zero,quo1
+	#bge $s7,$zero,quo1
+
+continue:
+	move $a0,$s0
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print4bits
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+
+	move $a0,$t2
+	li $a1,28
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bitsleft
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+
+	move $a0,$s7
+	li $a1,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bitsright
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,NL
+	syscall
+
+	la $a0,SHIFT
+	syscall
+
+	move $a0,$s0
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print4bits
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+
+	sll $t0,$t2,28
+	move $t2,$t0
+	srl $t0,$t2,1
+	move $t2,$t0
+	srl $t0,$t2,24
+	move $t2,$t0
+	move $a0,$t2
+	li $a1,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bitsleft
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+
+	move $a0,$s7
+	li $a1,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bitsright
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,NL
+	syscall
+
+	move $a0,$t3
+	move $a1,$t2
+	li $a2,24
+	li $a3,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal calcremainder
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,REM
+	syscall
+	move $a0,$s0
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print4bits
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+	move $a0,$t2
+	li $a1,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bitsleft
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+	move $a0,$s7
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bits
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,NL
+	syscall
+
+	blt $s7,$zero,restorerem2
+	#bge $s7,$zero,quo1
+
+continue2:
+	move $a0,$s0
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print4bits
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+
+	move $a0,$t2
+	li $a1,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bitsleft
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+
+	move $a0,$s7
+	li $a1,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bitsright
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,NL
+	syscall
+
+	la $a0,SHIFT
+	syscall
+
+	move $a0,$s0
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print4bits
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+
+	sll $t0,$t2,24
+	move $t2,$t0
+	srl $t0,$t2,1
+	move $t2,$t0
+	srl $t0,$t2,24
+	move $t2,$t0
+	move $a0,$t2
+	li $a1,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bitsleft
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+
+	move $a0,$s7
+	li $a1,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bitsright
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,NL
+	syscall
+
+	move $a0,$t3
+	move $a1,$t2
+	li $a2,24
+	li $a3,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal calcremainder
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,REM
+	syscall
+	move $a0,$s0
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print4bits
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+	move $a0,$t2
+	li $a1,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bitsleft
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+	move $a0,$s7
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bits
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,NL
+	syscall
+
+	blt $s7,$zero,restorerem3
+	#bge $s7,$zero,quo1
+
+continue3:
+	move $a0,$s0
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print4bits
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+
+	move $a0,$t2
+	li $a1,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bitsleft
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+
+	move $a0,$s7
+	li $a1,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bitsright
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,NL
+	syscall
+
+	la $a0,SHIFT
+	syscall
+
+	move $a0,$s0
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print4bits
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+
+	sll $t0,$t2,24
+	move $t2,$t0
+	srl $t0,$t2,1
+	move $t2,$t0
+	srl $t0,$t2,24
+	move $t2,$t0
+	move $a0,$t2
+	li $a1,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bitsleft
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+
+	move $a0,$s7
+	li $a1,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bitsright
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,NL
+	syscall
+
+	move $a0,$t3
+	move $a1,$t2
+	li $a2,24
+	li $a3,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal calcremainder
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,REM
+	syscall
+	move $a0,$s0
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print4bits
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+	move $a0,$t2
+	li $a1,24
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bitsleft
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,SPC2
+	syscall
+	move $a0,$s7
+	addi $sp,$sp,-16
+	sw $t2,4($sp)
+	sw $t3,8($sp)
+	sw $s0,12($sp)
+	sw $ra,16($sp)
+	jal print8bits
+	lw $t2,4($sp)
+	lw $t3,8($sp)
+	lw $s0,12($sp)
+	lw $ra,16($sp)
+	li $v0,4
+	la $a0,NL
+	syscall
+
+	#
 
 	jr $ra
+
+restorerem:
+	move $s7,$t3
+	li $v0,4
+	la $a0,RESTORE
+	syscall
+	j continue
+
+restorerem2:
+	move $s7,$t3
+	li $v0,4
+	la $a0,RESTORE
+	syscall
+	j continue2
+
+restorerem3:
+	move $s7,$t3
+	li $v0,4
+	la $a0,RESTORE
+	syscall
+	j continue3
 
 PROMPTDIV:
 	li $v0,4
@@ -211,7 +742,7 @@ loop8:
 
 print8bitsleft:
 	move $t2,$a0
-	sll $t1,$t2,28
+	sllv $t1,$t2,$a1
 	li $s1,8
 	move $s2,$t1
 loop8left:
@@ -231,7 +762,7 @@ loop8left:
 
 print8bitsright:
 	move $t3,$a0
-	sll $t1,$t3,24
+	sllv $t1,$t3,$a1
 	li $s1,8
 	move $s2,$t1
 loop8right:
@@ -252,8 +783,8 @@ loop8right:
 calcremainder:
 	move $t3,$a0
 	move $t2,$a1
-	sll $t0,$t2,28
-	sll $t1,$t3,24
+	sllv $t0,$t2,$a2
+	sllv $t1,$t3,$a3
 	sub $t1,$t1,$t0
 	move $s7,$t1
 	jr $ra
